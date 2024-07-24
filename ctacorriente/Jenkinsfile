@@ -1,0 +1,100 @@
+pipeline {
+    agent any
+
+    tools {
+        // Instalar Maven desde las herramientas globales de Jenkins
+        maven 'Maven 3.6.3'
+        jdk 'jdk-19'
+        jfrog 'jfrog-cli'
+    }
+
+    environment {
+        ARTIFACTORY_URL = 'http://localhost:8082/artifactory'
+        ARTIFACTORY_REPO = 'test-ctacorriente'
+        ARTIFACTORY_CREDS = credentials('jfrog-creds') // ID de las credenciales de Artifactory en Jenkins
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                // Clonar el código fuente desde el repositorio
+                git url: 'https://github.com/Wildesdar37/eva_final.git', branch: 'main'
+            }
+        }
+
+        stage('Debug') {
+            steps {
+                sh 'pwd'
+                sh 'ls -la'
+                sh 'cat docker-compose.test.yml'
+            }
+        }
+
+        stage('test') {
+            steps {
+                dir('ctacorriente') {
+                    withEnv(['SPRING_PROFILES_ACTIVE=test']) {
+                        sh 'mvn test'
+                    }
+                }
+            }
+        }
+
+        stage('Publish Reports') {
+            steps {
+                cucumber '**/target/cucumber-reports/cucumber.json'
+                cucumber '**/target/cucumber-reports/*.json'
+            }
+        }
+
+        stage('build') {
+            steps {
+                dir('ctacorriente') {
+                    withEnv(['SPRING_PROFILES_ACTIVE=default']) {
+                        sh 'mvn package -DskipTests'
+                    }
+                }
+            }
+        }
+
+        stage('Upload to jfrog') {
+            steps {
+                dir('ctacorriente') {
+                    // Show the installed version of JFrog CLI.
+                    jf '-v'
+
+                    // Show the configured JFrog Platform instances.
+                    jf 'c show'
+
+                    // Ping Artifactory.
+                    jf 'rt ping'
+
+                    // Create a file and upload it to a repository in Artifactory
+                    jf "rt u target/ctacorriente-0.0.1-SNAPSHOT.war test-ctacorriente/${BUILD_TAG}/"
+
+                    // Publish the build-info to Artifactory.
+                    jf 'rt bp'
+                }
+            }
+        }
+
+                stage('clean') {
+            steps {
+                dir('ctacorriente') {
+                    withEnv(['SPRING_PROFILES_ACTIVE=default']) {
+                        sh 'mvn clean'
+                    }
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Build and tests were successful!'
+        }
+        failure {
+            echo 'Build or tests failed.'
+        }
+    }
+}

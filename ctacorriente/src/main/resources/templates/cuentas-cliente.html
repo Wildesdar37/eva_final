@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Cuentas del Cliente</title>
+    <link rel="stylesheet" type="text/css" href="/css/listado-cuentas.css"/>
+</head>
+<body>
+    <div class="container">
+        <h2>Cuentas del Cliente</h2>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID Cuenta</th>
+                    <th>Número de Cuenta</th>
+                    <th>Tipo de Cuenta</th>
+                    <th>Saldo</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="cuenta : ${cuentas}">
+                    <td th:text="${cuenta.idCuenta}"></td>
+                    <td th:text="${cuenta.numeroCuenta}"></td>
+                    <td th:text="${cuenta.tipoCuenta}"></td>
+                    <td th:text="${cuenta.monto}"></td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="form-group text-right">
+            <a th:href="@{/}" class="btn btn-secondary">Volver</a>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,24 @@
+
+services:
+  test-db:
+    image: mysql:8.4.0
+    environment:
+      MYSQL_DATABASE: cuentas_clientes
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: admin
+      MYSQL_ROOT_PASSWORD: admin
+    ports:
+      - "3307:3306"
+
+  test-app:
+    build:
+      context: ./ctacorriente
+      dockerfile: Dockerfile.test
+    depends_on:
+      - test-db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://test-db:3306/cuentas_clientes
+      - SPRING_DATASOURCE_USERNAME=admin
+      - SPRING_DATASOURCE_PASSWORD=admin
+      - SPRING_PROFILES_ACTIVE=test
+    command: ["./mvnw", "test"]

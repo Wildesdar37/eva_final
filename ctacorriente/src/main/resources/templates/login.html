@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <link rel="stylesheet" type="text/css" href="/css/login_register.css"/>
+</head>
+<body>
+    <div class="container">
+        <h2>Login</h2>
+        <form th:action="@{/login}" method="post">
+            <div th:if="${param.error}" id="error" class="alert alert-danger">
+                Credenciales inválidas.
+            </div>
+            <div th:if="${param.logout}" class="alert alert-success">
+                Hasta pronto.
+            </div>
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" class="form-control" required/>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" class="form-control" required/>
+            </div>
+            <div class="form-group">
+                <button type="submit" id="loginButton" class="btn btn-primary">Ingresar</button>
+            </div>
+        </form>
+        <div class="register-link">
+            <p>¿No estás registrado? <a th:href="@{/register}">Registrarse aquí</a></p>
+        </div>
+    </div>
+</body>
+</html>

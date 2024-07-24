@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Home</title>
+    <link rel="stylesheet" type="text/css" href="/css/home.css"/>
+</head>
+<body>
+    <div class="wrapper">
+        <nav class="sidebar">
+            <ul class="menu">
+                <li><a th:href="@{/crear-cliente}" id="crearCliente">Crear Cliente</a></li>
+                <li><a th:href="@{/transferencia}" id="crearTransaccion" class="btn btn-action">Transferir</a></li>
+            </ul>
+        </nav>
+        <div class="main-content">
+            <div class="header">
+                <div class="user-actions">
+                    <a th:href="@{/perfil-ejecutivo}" class="btn btn-action">Mi Perfil</a>
+                    <form th:action="@{/logout}" method="post" class="inline-form">
+                        <button type="submit" class="btn btn-primary">Logout</button>
+                    </form>
+                </div>
+                <h2 id="header-message">Platinum Banco</h2>
+            </div>
+            <div class="actions">
+                <h3>Clientes</h3>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>RUT</th>
+                            <th>Nombre</th>
+                            <th>Apellido</th>
+                            <th>Email</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="cliente : ${clientes}">
+                            <td th:text="${cliente.rut}"></td>
+                            <td th:text="${cliente.nombre}"></td>
+                            <td th:text="${cliente.apellido}"></td>
+                            <td th:text="${cliente.email}"></td>
+                            <td>
+                                <a th:href="@{/cuentas-cliente(rutCliente=${cliente.rut})}" class="btn btn-action">Ver Cuentas</a>
+                                <a th:href="@{/register-cta(rutCliente=${cliente.rut})}" class="btn btn-action">Crear Cuenta</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

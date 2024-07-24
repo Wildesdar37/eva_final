@@ -1,0 +1,11 @@
+FROM eclipse-temurin:17-jdk-focal
+WORKDIR /app
+COPY pom.xml .
+RUN mvn dependency:go-offline
+
+COPY src ./src
+
+ARG PROFILE=test
+ENV SPRING_PROFILES_ACTIVE=${PROFILE}
+
+CMD ["mvn", "test"]
